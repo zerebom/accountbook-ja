@@ -1,5 +1,6 @@
 // STEP05: ファイルへの保存
-
+// log.fatal...致命的なエラー
+// https://qiita.com/ryokky59/items/19fa212d1898dcb4bcfd
 package main
 
 import (
@@ -20,6 +21,7 @@ type Item struct {
 func main() {
 
 	// TODO: "accountbook.txt"という名前のファイルを書き込み用で開く
+	file, err := os.Create("accountbook.txt")
 	// 開く場合にエラーが発生した場合
 	if err != nil {
 		// エラーを出力して終了する
@@ -64,6 +66,7 @@ func inputItem(file *os.File) error {
 
 	// ファイルに書き出す
 	// 「品目 値段」のように書き出す
+	// string
 	line := fmt.Sprintf("%s %d\n", item.Category, item.Price)
 	if _, err := file.WriteString(line); err != nil {
 		// エラーが発生した場合はエラーを返す
@@ -71,6 +74,7 @@ func inputItem(file *os.File) error {
 	}
 
 	// TODO: エラーがなかったことを表すnilを返す
+	return nil
 }
 
 // 一覧の表示を行う関数
@@ -89,12 +93,14 @@ func showItems() error {
 	// 1行ずつ読み込む
 	for scanner.Scan() {
 		// TODO: 1行分を取り出す
+		line := scanner.Text()
 
 		// 1行をスペースで分割する
 		splited := strings.Split(line, " ")
 		// 2つに分割できなかった場合はエラー
 		if len(splited) != 2 {
 			// TODO: 「パースに失敗しました」というエラーを生成して返す
+			return errors.New("パースに失敗しました")
 		}
 
 		// 1つめが品目
@@ -102,6 +108,7 @@ func showItems() error {
 
 		// 2つめが値段
 		// TODO: string型をint型に変換する
+		price, err := strconv.Atoi(splited[1])
 		if err != nil {
 			return err
 		}
